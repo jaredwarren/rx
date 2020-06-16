@@ -1,0 +1,113 @@
+version: '3.5'
+
+services:
+
+
+
+  mysql:
+    image: mariadb:10.4
+    restart: always
+    ports:
+        - 3306:3306
+    networks:
+        - mysql
+    volumes:
+      # - ./.docker/databases/data:/var/lib/mysql
+      # - ./.docker/databases/dump:/backup
+      # - ./.docker/databases/conf.d:/etc/mysql/conf.d
+      - my-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      # MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      # MYSQL_DATABASE_FILE: /run/secrets/mysql_name
+      # MYSQL_USER_FILE: /run/secrets/mysql_user
+      # MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+    # secrets:
+    #   - mysql_root_password
+    #   - mysql_name
+    #   - mysql_user
+    #   - mysql_password
+  # user:
+  #   restart: always
+  #   build: ./user-service
+  #   ports:
+  #     - 50053:50051
+  #   environment:
+  #     MICRO_ADDRESS: ":50051"
+  #     DB_HOST: "database"
+  #     DB_USER: "admin"
+  #     DB_PASSWORD: "password"
+  #     DB_NAME: "postgres"
+
+
+  # # Services
+  # consignment:
+  #   restart: always
+  #   build: ./shippy-service-consignment
+  #   depends_on:
+  #     - datastore
+  #     - vessel
+  #   links:
+  #     - datastore
+  #   ports:
+  #     - 50051:50051
+  #   environment:
+  #     MICRO_SERVER_ADDRESS: ":50051"
+  #     DB_HOST: "mongodb://datastore:27017"
+
+  # vessel:
+  #   restart: always
+  #   build: ./shippy-service-vessel
+  #   ports:
+  #     - 50052:50051
+  #   environment:
+  #     MICRO_SERVER_ADDRESS: ":50051"
+  #     DB_HOST: "mongodb://datastore:27017"
+
+  
+
+  # # Commands
+  # cli:
+  #   build: ./shippy-cli-consignment
+
+  # user-cli:
+  #   build: ./shippy-cli-user
+
+  # # Database tier
+  # datastore:
+  #   image: mongo
+  #   container_name: datastore
+  #   environment:
+  #     - MONGO_DATA_DIR=/data/db
+  #     - MONGO_LOG_DIR=/dev/null
+  #   volumes:
+  #     - ./data/db:/data/db # ensures data persistence between restarting
+  #   ports:
+  #     - 27017:27017
+  #   command: mongod --logpath=/dev/null
+
+  # database:
+  #   image: postgres:alpine
+  #   environment:
+  #     POSTGRES_PASSWORD: "password"
+  #     POSTGRES_USER: "admin"
+  #   ports:
+  #     - 5432:5432
+
+# secrets:
+#   mysql_root_password:
+#     file: ./.docker/secrets/mysql_root_password.txt
+#   mysql_name:
+#     file: ./.docker/secrets/mysql_name.txt
+#   mysql_user:
+#     file: ./.docker/secrets/mysql_user.txt
+#   mysql_password:
+#     file: ./.docker/secrets/mysql_password.txt
+networks:
+  mysql:
+    driver: bridge
+volumes:
+  my-db:

@@ -20,20 +20,49 @@ var _ = Service("recipe", func() {
 	})
 })
 
+
+recipe 
+ - result of steps
+
+step
+  - ingredients
+  - action(s)
+
+ingredient
+ - quantity of recipe
+
+
+// maybe I can organize things like git tree?
+
+
+// quantity may need to scale sub recipe/step quantities. 
+
 // RecipePayload ...
 var RecipePayload = Type("Recipe", func() {
 	Description("Recipe ...")
 	// minimum data required to create or update a recipe
+	Attribute("id", UInt, "ID")                // Attribute value of type integer
 	Attribute("title", String, "Recipe Title") // Attribute value of type integer
 	Attribute("description", String, "Long description of recipe")
 	Attribute("image", String, "Image of recipe")
 
+	Attribute("started", Boolean)
+	Attribute("duration", "Time")
+	Attribute("progress", "Time", "percent complete")
+	Attribute("finished", Boolean)
+
+	// dependance and parent are dependant on parent recipe???? how to make recipe reusable for other recipes
+	Attribute("dependance", String, "")
+	Attribute("parent", UInt, "parent ID")
+
+	Attribute("ingredients", "IngredientList", "List of ingredients")
+
+	// TODO: might need specific version for each component
 	Attribute("version", String, "Version Number e.g. 1.0.1")
 
 	// TODO: Fix Times
 	// "times" maybe should be calculated from steps, if possible.
 	// see if I can calculate time left, based on steps left?
-	Attribute("times", TimeList)
 	// Attribute("prep_time", DateTime, "Amount of time to prepare")
 	// Attribute("cook_time", DateTime, "Amount of time to cook")
 	// Attribute("wait_time", DateTime, "Amount of time to wait for things such as mairnading")
@@ -42,14 +71,14 @@ var RecipePayload = Type("Recipe", func() {
 	// Equipment should belong to step???
 	Attribute("equipment", "EquipmentList", "List of tools needed")
 
-	Attribute("ingredients", "IngredientList", "List of ingredients")
-
 	//Attribute("directions", CollectionOf("application/recipe.step+json"), "List of steps")
-	Attribute("steps", "StepList", "List of steps")
+	// Attribute("steps", "StepList", "List of steps")
 	// Directions might need to be an array of grouped steps i.e. prep_steps cook_steps, plate_steps..
 	// Directions might need to be a "workflow", multiple steps, some can be completed async
 
-	//Attribute("categories", CollectionOf("application/recipe.category+json"), "List of categories, basically same as tag")
+	Attribute("notes", ArrayOf(Note), "List of dated notes")
+
+	// meta data
 	Attribute("favorite", Boolean, "Is a favorite, basically a tag")
 	//Attribute("tags", CollectionOf("application/recipe.tag+json"), "List of tags")
 	Attribute("tags", TagList)
@@ -61,38 +90,15 @@ var RecipePayload = Type("Recipe", func() {
 		Minimum(0)
 		Maximum(1)
 	})
-	Attribute("source", String, "Source of recipe")
-	Attribute("notes", ArrayOf(Note), "List of dated notes")
-	Attribute("state", String, "e.g. chopped, sliced, etc.. might need to be array.")
-	Attribute("complete", Boolean, "If it's been added/included")
+	Attribute("source", String, "URL Source of recipe")
 
 	Required("title")
-})
-
-// Step recipe or individual component and a quantity.
-var Step = Type("Step", func() {
-	Attribute("id", String, "Unique ID")
-	Attribute("title", String, "")
-	Attribute("description", String, "HTML")
-	Attribute("in_progress", Boolean, "current state") // ??
-	Attribute("complete", Boolean, "is completed")
-	Attribute("time", "DateTime", "time to complete. e.g. boil for 20 min")
-
-	// Steps seam to be most important part... maybe I should move nearly everything from recipe to step.
-	// Steps are basically a gantt chart
-
-	// Attribute("ingredients", CollectionOf("application/recipe.recipe+json"), "List of ingredients for this step")
-	// Attribute("parts", CollectionOf("application/recipe.cookware+json"), "list of cookware needed for this step")
-})
-
-// StepList is an array of ingredients. Can't use "ArrayOf" directly otherwise we get an initialization error.
-var StepList = Type("StepList", func() {
-	Attribute("steps", ArrayOf(Step), "List of ingredients")
 })
 
 // Ingredient recipe or individual component and a quantity.
 var Ingredient = Type("Ingredient", func() {
 	Attribute("recipe", Recipe, "")
+	// might need level and/or parent?
 	Attribute("quantity", String, "TODO: make UnitOfMeasure")
 })
 
