@@ -2,4 +2,8 @@ module github.com/jaredwarren/rx/user-service
 
 go 1.13
 
-require google.golang.org/grpc v1.29.1
+require (
+	github.com/golang/protobuf v1.4.1
+	google.golang.org/grpc v1.29.1
+	google.golang.org/protobuf v1.24.0
+)

@@ -95,13 +95,13 @@ func main() {
 	defer conn.Close()
 	userClient := user.NewUserServiceClient(conn)
 
-	fmt.Printf("%+v\n", userClient)
+	fmt.Printf(" - %+v\n", userClient)
 
-	controllers.Register(mux)
+	controllers.Register(mux, userClient)
 
 	// Start Server
 	server := &http.Server{
-		Addr:    "127.0.0.1:8080",
+		Addr:    ":8080",
 		Handler: mux,
 	}
 	go func() {

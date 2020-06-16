@@ -4,6 +4,8 @@ import (
 	"log"
 	"net"
 
+	"github.com/jaredwarren/rx/user-service/controllers"
+	"github.com/jaredwarren/rx/user-service/proto/user"
 	"google.golang.org/grpc"
 )
 
@@ -30,6 +32,7 @@ func main() {
 	// implementation into the auto-generated interface code for our
 	// protobuf definition.
 	// pb.RegisterUserServiceServer(s, &service{repo})
+	user.RegisterUserServiceServer(s, &controllers.User{})
 
 	log.Println("Running on port:", port)
 	if err := s.Serve(lis); err != nil {

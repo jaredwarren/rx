@@ -1,25 +1,15 @@
-FROM golang:alpine as builder
+FROM scratch
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache git
+EXPOSE 8080
 
-RUN mkdir /app
-WORKDIR /app
+COPY --chown=0:0 user-docker user
 
-ENV GO111MODULE=on
+# COPY templates templates/ 
 
-COPY . .
 
-RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o user-service *.go
+USER 65534
 
-# Run container
-FROM alpine:latest
+ENTRYPOINT ["/user"]
 
-RUN apk --no-cache add ca-certificates
-
-RUN mkdir /app
-WORKDIR /app
-COPY --from=builder /app/user-service .
-
-CMD ["./user-service"]
+# BUILD WITH!!!!
+# GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o user
