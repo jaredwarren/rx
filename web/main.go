@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"mime"
 	"net/http"
 	"os"
@@ -9,6 +10,9 @@ import (
 	"path/filepath"
 
 	"github.com/gorilla/mux"
+	user "github.com/jaredwarren/rx/user-service/proto/user"
+	"github.com/jaredwarren/rx/web/controllers"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -82,6 +86,19 @@ func main() {
 	})
 	mux.HandleFunc("/health-check", HealthCheck).Methods("GET", "HEAD")
 
+	//
+	// Set up a connection to the server.
+	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+	userClient := user.NewUserServiceClient(conn)
+
+	fmt.Printf("%+v\n", userClient)
+
+	controllers.Register(mux)
+
 	// Start Server
 	server := &http.Server{
 		Addr:    "127.0.0.1:8081",
@@ -89,14 +106,14 @@ func main() {
 	}
 	go func() {
 		// TODO: add https, stuff...
-		fmt.Printf("HTTP server listening on %q\n", server.Addr)
+		fmt.Printf("HTTP server listening on http:%q\n", server.Addr)
 		exit <- server.ListenAndServe()
 	}()
 
 	// Wait to finish
 	d := <-exit
 
-	fmt.Println("DONE!!!!", d)
+	fmt.Println("\nDONE!!!!", d)
 
 }
 

@@ -3,44 +3,39 @@ version: '3.5'
 services:
 
 
-
-  mysql:
-    image: mariadb:10.4
+  user:
     restart: always
+    build: ./user-service
     ports:
-        - 3306:3306
-    networks:
-        - mysql
-    volumes:
-      # - ./.docker/databases/data:/var/lib/mysql
-      # - ./.docker/databases/dump:/backup
-      # - ./.docker/databases/conf.d:/etc/mysql/conf.d
-      - my-db:/var/lib/mysql
+      - 50052:50051
     environment:
-      MYSQL_ROOT_PASSWORD: somewordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-      # MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-      # MYSQL_DATABASE_FILE: /run/secrets/mysql_name
-      # MYSQL_USER_FILE: /run/secrets/mysql_user
-      # MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
-    # secrets:
-    #   - mysql_root_password
-    #   - mysql_name
-    #   - mysql_user
-    #   - mysql_password
-  # user:
+      MICRO_SERVER_ADDRESS: ":50051"
+      # DB_HOST: "mongodb://datastore:27017"
+
+  web:
+    restart: always
+    build: ./user-service
+    ports:
+      - 50052:50051
+    environment:
+      MICRO_SERVER_ADDRESS: ":50051"
+      # DB_HOST: "mongodb://datastore:27017"
+
+
+  # mysql:
+  #   image: mariadb:10.4
   #   restart: always
-  #   build: ./user-service
   #   ports:
-  #     - 50053:50051
+  #       - 3306:3306
+  #   networks:
+  #       - mysql
+  #   volumes:
+  #     - my-db:/var/lib/mysql
   #   environment:
-  #     MICRO_ADDRESS: ":50051"
-  #     DB_HOST: "database"
-  #     DB_USER: "admin"
-  #     DB_PASSWORD: "password"
-  #     DB_NAME: "postgres"
+  #     MYSQL_ROOT_PASSWORD: somewordpress
+  #     MYSQL_DATABASE: wordpress
+  #     MYSQL_USER: wordpress
+  #     MYSQL_PASSWORD: wordpress
 
 
   # # Services
