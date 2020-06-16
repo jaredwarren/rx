@@ -88,7 +88,7 @@ func main() {
 
 	//
 	// Set up a connection to the server.
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("user:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}
@@ -101,7 +101,7 @@ func main() {
 
 	// Start Server
 	server := &http.Server{
-		Addr:    "127.0.0.1:8081",
+		Addr:    "127.0.0.1:8080",
 		Handler: mux,
 	}
 	go func() {

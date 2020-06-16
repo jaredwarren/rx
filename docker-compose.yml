@@ -7,20 +7,21 @@ services:
     restart: always
     build: ./user-service
     ports:
-      - 50052:50051
+      - 50051:50051
     environment:
       MICRO_SERVER_ADDRESS: ":50051"
       # DB_HOST: "mongodb://datastore:27017"
 
   web:
     restart: always
-    build: ./user-service
+    build: ./web
     ports:
-      - 50052:50051
-    environment:
-      MICRO_SERVER_ADDRESS: ":50051"
+      - 80:8080
+    # environment:
+      # MICRO_SERVER_ADDRESS: ":50051"
       # DB_HOST: "mongodb://datastore:27017"
 
+  # TODO: add traefik
 
   # mysql:
   #   image: mariadb:10.4
